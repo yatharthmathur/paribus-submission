@@ -31,6 +31,57 @@ class SqlAlchemyHospitalRepository(HospitalRepository):
             return None
         return self._to_domain(record)
 
+    def update(self, hospital: Hospital) -> Hospital:
+        if hospital.id is None:
+            raise ValueError("Hospital id is required for update")
+
+        record = self._session.get(HospitalRecord, hospital.id)
+        if record is None or not record.active:
+            raise ValueError("Cannot update a missing or inactive hospital")
+
+        record.name = hospital.name
+        record.address = hospital.address
+        record.phone = hospital.phone
+        self._session.flush()
+        self._session.refresh(record)
+        return self._to_domain(record)
+
+    def delete_by_id(self, hospital_id: int) -> None:
+        record = self._session.get(HospitalRecord, hospital_id)
+        if record is None or not record.active:
+            return
+
+        record.active = False
+        self._session.flush()
+
+    def delete_by_batch_id(self, batch_id: UUID) -> int:
+        records = list(
+            self._session.scalars(
+                select(HospitalRecord).where(
+                    HospitalRecord.creation_batch_id == str(batch_id), HospitalRecord.active
+                )
+            ).all()
+        )
+
+        for record in records:
+            record.active = False
+
+        self._session.flush()
+        return len(records)
+
+    def activate_by_batch_id(self, batch_id: UUID) -> int:
+        records = list(
+            self._session.scalars(
+                select(HospitalRecord).where(HospitalRecord.creation_batch_id == str(batch_id))
+            ).all()
+        )
+
+        for record in records:
+            record.active = True
+
+        self._session.flush()
+        return len(records)
+
     def list(self, filters: HospitalFilters | None = None) -> list[Hospital]:
         query: Select[tuple[HospitalRecord]] = (
             select(HospitalRecord).order_by(HospitalRecord.id).where(HospitalRecord.active)

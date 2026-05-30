@@ -376,3 +376,5 @@ Use FastAPI's built-in docs instead of maintaining endpoint documentation in the
 - ReDoc: `GET /redoc`
 
 This keeps the API documentation closer to the implementation and avoids the README drifting out of sync.
+
+Phone numbers are validated and normalized using an international format. In practice, send values in E.164 style such as `+14155552671`.

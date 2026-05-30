@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from app.domain.exceptions import (
     BusinessRuleError,
+    HospitalBatchNotFoundError,
     HospitalNotFoundError,
 )
 
@@ -12,6 +13,16 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def handle_hospital_not_found(
         _: Request,
         exc: HospitalNotFoundError,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"detail": exc.message, "error_code": exc.error_code},
+        )
+
+    @app.exception_handler(HospitalBatchNotFoundError)
+    async def handle_hospital_batch_not_found(
+        _: Request,
+        exc: HospitalBatchNotFoundError,
     ) -> JSONResponse:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
