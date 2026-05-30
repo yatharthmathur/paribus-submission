@@ -5,15 +5,9 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_healthcheck() -> None:
-    response = client.get("/health")
-
-    assert response.status_code == 200
-    assert response.json()["status"] == "ok"
-
-
-def test_root() -> None:
+def test_root_healthcheck() -> None:
     response = client.get("/")
 
     assert response.status_code == 200
-    assert response.json()["message"] == "Welcome to Hospital Directory System"
+    assert response.json()["status"] == "ok"
+    assert response.json()["service"] == "Hospital Directory System"
