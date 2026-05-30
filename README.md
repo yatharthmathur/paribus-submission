@@ -112,7 +112,6 @@ The API will be exposed on `http://127.0.0.1:${HOST_PORT:-8000}`.
 
 ## Endpoints
 
-- `GET /` - basic metadata
-- `GET /health` - healthcheck endpoint
+- `GET /` - healthcheck endpoint
 - `GET /docs` - Swagger UI
 - `GET /redoc` - ReDoc
