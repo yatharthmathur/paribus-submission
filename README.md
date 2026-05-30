@@ -368,11 +368,11 @@ The API will be exposed on `http://127.0.0.1:${HOST_PORT:-8000}`.
 | `LOG_LEVEL` | `INFO` | Uvicorn log level |
 | `HOST_PORT` | `8000` | Host port published by Docker Compose |
 
-## Endpoints
+## API Documentation
 
-- `GET /` - healthcheck endpoint
-- `POST /hospitals` - create a hospital record (the `active` field defaults to `true`, and `creation_batch_id` is generated if omitted)
-- `GET /hospitals` - list hospitals, with optional `active` and `creation_batch_id` filters
-- `GET /hospitals/{id}` - fetch a hospital by ID
-- `GET /docs` - Swagger UI
-- `GET /redoc` - ReDoc
+Use FastAPI's built-in docs instead of maintaining endpoint documentation in the README:
+
+- Swagger UI: `GET /docs`
+- ReDoc: `GET /redoc`
+
+This keeps the API documentation closer to the implementation and avoids the README drifting out of sync.
