@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, field_serializer, field_validator
 
-from app.application.commands import CreateHospitalCommand
+from app.application.commands import CreateHospitalCommand, UpdateHospitalCommand
 from app.domain.hospital import Hospital
 
 
@@ -19,6 +19,20 @@ class HospitalCreate(BaseModel):
             address=self.address,
             phone=self.phone,
             creation_batch_id=self.creation_batch_id,
+        )
+
+
+class HospitalUpdate(BaseModel):
+    name: str
+    address: str
+    phone: str
+
+    def to_command(self, hospital_id: int) -> UpdateHospitalCommand:
+        return UpdateHospitalCommand(
+            hospital_id=hospital_id,
+            name=self.name,
+            address=self.address,
+            phone=self.phone,
         )
 
 

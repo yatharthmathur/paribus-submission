@@ -179,6 +179,165 @@ uv run alembic downgrade -1
 
 For a new environment or deployment target, run migrations before starting the API.
 
+## Adding New APIs
+
+Because this project uses a ports-and-adapters structure, adding a new API usually means touching a few specific layers rather than putting everything in FastAPI routes.
+
+### Layers to update
+
+#### 1. API layer
+
+Files typically involved:
+
+- `app/api/routes.py`
+- `app/schemas/...`
+
+Responsibilities:
+
+- define the HTTP route
+- validate request payloads/query params
+- shape response DTOs
+- call the application service
+
+Keep this layer thin. It should not contain business rules or direct SQLAlchemy queries.
+
+#### 2. Application layer
+
+Files typically involved:
+
+- `app/application/commands.py`
+- `app/application/services.py`
+- sometimes `app/application/ports.py`
+
+Responsibilities:
+
+- define commands/inputs for use cases
+- implement business logic
+- coordinate repositories through ports
+- raise business-level exceptions
+
+This is the main place to add new business behavior.
+
+#### 3. Domain layer
+
+Files typically involved:
+
+- `app/domain/hospital.py`
+- `app/domain/exceptions.py`
+- other domain modules as the system grows
+
+Responsibilities:
+
+- domain entities
+- business exceptions
+- domain rules/value objects
+
+Only update this layer when the business concepts themselves change.
+
+#### 4. Adapter layer
+
+Files typically involved:
+
+- `app/adapters/persistence/sqlalchemy/repositories.py`
+- `app/adapters/persistence/sqlalchemy/unit_of_work.py`
+- `app/adapters/persistence/sqlalchemy/models.py`
+
+Responsibilities:
+
+- implement persistence ports
+- translate between domain objects and SQLAlchemy models
+- support new database access patterns required by the application layer
+
+Only update this layer when the use case needs new persistence behavior.
+
+#### 5. Migration layer
+
+Files typically involved:
+
+- `alembic/versions/*.py`
+
+Responsibilities:
+
+- evolve the database schema safely
+
+Only add a migration if the database schema changes.
+
+### Typical scenarios
+
+#### Add a read-only API using existing data
+
+Example: a new `GET` endpoint using fields already stored in the database.
+
+Usually update:
+
+- route
+- response schema
+- service method
+- repository method only if current queries are insufficient
+
+No migration is needed if the schema does not change.
+
+#### Add a state-changing API using existing fields
+
+Example: `PATCH /hospitals/{id}/activate`.
+
+Usually update:
+
+- route
+- request schema
+- command
+- service method
+- domain exceptions if needed
+- port/repository methods if needed
+
+No migration is needed if the data already exists in the schema.
+
+#### Add a new field
+
+Example: `email`, `city`, or `hospital_type`.
+
+Usually update:
+
+- domain entity
+- request/response schema
+- command/service logic
+- SQLAlchemy model
+- repository mapping
+- Alembic migration
+
+### Recommended workflow
+
+When adding a new API:
+
+1. define the request/response schema
+2. add or update the application command/use case
+3. implement the service logic
+4. extend the port if new persistence behavior is needed
+5. implement the adapter/repository behavior
+6. add the FastAPI route
+7. add or update tests
+8. add an Alembic migration if the schema changed
+
+### Rule of thumb
+
+Ask these questions:
+
+- **Is this just HTTP shape?** Update route and schema.
+- **Is there business behavior?** Update service, command, and possibly domain exceptions.
+- **Does persistence behavior change?** Update ports and repository adapters.
+- **Does the schema change?** Add an Alembic migration.
+
+### Scaling tip
+
+As the project grows, single files like `routes.py`, `commands.py`, and `services.py` may become crowded. A natural next step is to split by feature/use case, for example:
+
+- `app/api/routes/hospitals.py`
+- `app/application/commands/create_hospital.py`
+- `app/application/services/hospital_service.py`
+- `app/schemas/hospitals.py`
+
+That keeps the same architecture while making the codebase easier to extend.
+
 ## Docker Deployment
 
 Build and run locally with Docker Compose:
@@ -209,11 +368,13 @@ The API will be exposed on `http://127.0.0.1:${HOST_PORT:-8000}`.
 | `LOG_LEVEL` | `INFO` | Uvicorn log level |
 | `HOST_PORT` | `8000` | Host port published by Docker Compose |
 
-## Endpoints
+## API Documentation
 
-- `GET /` - healthcheck endpoint
-- `POST /hospitals` - create a hospital record (the `active` field defaults to `true`, and `creation_batch_id` is generated if omitted)
-- `GET /hospitals` - list hospitals, with optional `active` and `creation_batch_id` filters
-- `GET /hospitals/{id}` - fetch a hospital by ID
-- `GET /docs` - Swagger UI
-- `GET /redoc` - ReDoc
+Use FastAPI's built-in docs instead of maintaining endpoint documentation in the README:
+
+- Swagger UI: `GET /docs`
+- ReDoc: `GET /redoc`
+
+This keeps the API documentation closer to the implementation and avoids the README drifting out of sync.
+
+Phone numbers are validated and normalized using an international format. In practice, send values in E.164 style such as `+14155552671`.

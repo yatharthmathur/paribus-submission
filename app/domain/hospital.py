@@ -16,5 +16,4 @@ class Hospital:
 
 @dataclass(slots=True, frozen=True)
 class HospitalFilters:
-    active: bool | None = None
     creation_batch_id: UUID | None = None

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from types import TracebackType
 from typing import Self
+from uuid import UUID
 
 from app.domain.hospital import Hospital, HospitalFilters
 
@@ -15,7 +16,29 @@ class HospitalRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list(self, filters: HospitalFilters) -> list[Hospital]:
+    def update(self, hospital: Hospital) -> Hospital:
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete_by_id(self, hospital_id: int) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete_by_batch_id(self, batch_id: UUID) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def activate_by_batch_id(self, batch_id: UUID) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list(self, filters: HospitalFilters | None = None) -> list[Hospital]:
+        raise NotImplementedError
+
+
+class PhoneNumberValidator(ABC):
+    @abstractmethod
+    def normalize(self, phone_number: str) -> str:
         raise NotImplementedError
 
 
