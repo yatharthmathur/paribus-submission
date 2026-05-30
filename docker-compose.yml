@@ -11,7 +11,10 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/data/hospital_directory.db}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
       - "${HOST_PORT:-8000}:8000"
+    volumes:
+      - ./data:/app/data
     restart: unless-stopped
