@@ -1,0 +1,70 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual Environments (Crucial for Python) ---
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# --- Environment Variables & Secrets (Never commit these!) ---
+.env
+.env.*
+!.env.example
+secrets.toml
+*.pem
+*.key
+
+# --- FastAPI / Database / Logs ---
+*.log
+*.db
+*.sqlite3
+.database/
+
+# --- Pre-commit & Testing ---
+.pre-commit-cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+.cache/
+
+# --- IDEs and Editors ---
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
