@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hospital-directory-system-api:latest
+    container_name: hospital-directory-system-api
+    environment:
+      APP_NAME: ${APP_NAME:-Hospital Directory System}
+      APP_VERSION: ${APP_VERSION:-0.1.0}
+      APP_ENV: ${APP_ENV:-production}
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "${HOST_PORT:-8000}:8000"
+    restart: unless-stopped
