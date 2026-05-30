@@ -7,26 +7,27 @@ from app.application.commands import CreateHospitalCommand
 from app.domain.hospital import Hospital
 
 
-class HospitalBase(BaseModel):
+class HospitalCreate(BaseModel):
     name: str
     address: str
     phone: str
-    creation_batch_id: UUID
-    active: bool = False
+    creation_batch_id: UUID | None = None
 
-
-class HospitalCreate(HospitalBase):
     def to_command(self) -> CreateHospitalCommand:
         return CreateHospitalCommand(
             name=self.name,
             address=self.address,
             phone=self.phone,
             creation_batch_id=self.creation_batch_id,
-            active=self.active,
         )
 
 
-class HospitalRead(HospitalBase):
+class HospitalRead(BaseModel):
+    name: str
+    address: str
+    phone: str
+    creation_batch_id: UUID
+    active: bool = True
     id: int
     created_at: datetime
 

@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from uuid import uuid4
 
 from app.application.commands import CreateHospitalCommand
 from app.application.ports import UnitOfWork
@@ -17,8 +18,7 @@ class HospitalService:
             name=command.name.strip(),
             address=command.address.strip(),
             phone=command.phone.strip(),
-            creation_batch_id=command.creation_batch_id,
-            active=command.active,
+            creation_batch_id=command.creation_batch_id or uuid4(),
         )
 
         with self._uow_factory() as uow:

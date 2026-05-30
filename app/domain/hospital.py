@@ -9,7 +9,7 @@ class Hospital:
     address: str
     phone: str
     creation_batch_id: UUID
-    active: bool = False
+    active: bool = True
     id: int | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
