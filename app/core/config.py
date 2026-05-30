@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,8 +9,12 @@ class Settings(BaseSettings):
     app_version: str = Field(default="0.1.0", validation_alias="APP_VERSION")
     environment: str = Field(default="development", validation_alias="APP_ENV")
     host: str = Field(default="0.0.0.0", validation_alias="APP_HOST")
-    port: int = Field(default=8000, validation_alias="APP_PORT")
+    port: int = Field(default=8000, validation_alias=AliasChoices("PORT", "APP_PORT"))
     log_level: str = Field(default="INFO", validation_alias="LOG_LEVEL")
+    database_url: str = Field(
+        default="sqlite:///./hospital_directory.db",
+        validation_alias="DATABASE_URL",
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
