@@ -212,7 +212,7 @@ The API will be exposed on `http://127.0.0.1:${HOST_PORT:-8000}`.
 ## Endpoints
 
 - `GET /` - healthcheck endpoint
-- `POST /hospitals` - create a hospital record (the `active` field defaults to `true`)
+- `POST /hospitals` - create a hospital record (the `active` field defaults to `true`, and `creation_batch_id` is generated if omitted)
 - `GET /hospitals` - list hospitals, with optional `active` and `creation_batch_id` filters
 - `GET /hospitals/{id}` - fetch a hospital by ID
 - `GET /docs` - Swagger UI

@@ -7,4 +7,4 @@ class CreateHospitalCommand:
     name: str
     address: str
     phone: str
-    creation_batch_id: UUID
+    creation_batch_id: UUID | None = None

@@ -27,6 +27,23 @@ def test_create_and_fetch_hospital(client: TestClient) -> None:
     assert fetch_response.json()["name"] == payload["name"]
 
 
+def test_create_hospital_generates_creation_batch_id_when_missing(client: TestClient) -> None:
+    response = client.post(
+        "/hospitals",
+        json={
+            "name": "Generated Batch Hospital",
+            "address": "789 Lake Rd",
+            "phone": "555-9999",
+        },
+    )
+
+    assert response.status_code == 201
+    generated_hospital = response.json()
+    assert generated_hospital["creation_batch_id"]
+    assert len(generated_hospital["creation_batch_id"]) == 36
+    assert generated_hospital["active"] is True
+
+
 def test_list_hospitals_with_filters(client: TestClient) -> None:
     client.post(
         "/hospitals",

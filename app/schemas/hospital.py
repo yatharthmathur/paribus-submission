@@ -11,7 +11,7 @@ class HospitalCreate(BaseModel):
     name: str
     address: str
     phone: str
-    creation_batch_id: UUID
+    creation_batch_id: UUID | None = None
 
     def to_command(self) -> CreateHospitalCommand:
         return CreateHospitalCommand(
