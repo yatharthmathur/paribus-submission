@@ -41,12 +41,8 @@ def create_hospital(
 @router.get("/hospitals", response_model=list[HospitalRead], tags=["hospitals"])
 def list_hospitals(
     service: Annotated[HospitalService, Depends(get_hospital_service)],
-    active: ActiveFilter = None,
-    creation_batch_id: BatchFilter = None,
 ) -> list[HospitalRead]:
-    hospitals = service.list_hospitals(
-        HospitalFilters(active=active, creation_batch_id=creation_batch_id)
-    )
+    hospitals = service.list_hospitals()
     return [HospitalRead.from_domain(hospital) for hospital in hospitals]
 
 
@@ -57,3 +53,12 @@ def get_hospital(
 ) -> HospitalRead:
     hospital = service.get_hospital(hospital_id)
     return HospitalRead.from_domain(hospital)
+
+
+@router.get("/hospitals/batch/{batch_id}", response_model=list[HospitalRead], tags=["hospitals"])
+def get_hospitals_by_batch_id(
+    batch_id: UUID,
+    service: Annotated[HospitalService, Depends(get_hospital_service)],
+) -> list[HospitalRead]:
+    hospitals = service.list_hospitals(HospitalFilters(creation_batch_id=batch_id))
+    return [HospitalRead.from_domain(hospital) for hospital in hospitals]

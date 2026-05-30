@@ -26,7 +26,7 @@ class HospitalService:
             uow.commit()
             return created_hospital
 
-    def list_hospitals(self, filters: HospitalFilters) -> list[Hospital]:
+    def list_hospitals(self, filters: HospitalFilters | None = None) -> list[Hospital]:
         with self._uow_factory() as uow:
             return uow.hospitals.list(filters)
 

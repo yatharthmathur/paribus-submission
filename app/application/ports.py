@@ -15,7 +15,7 @@ class HospitalRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list(self, filters: HospitalFilters) -> list[Hospital]:
+    def list(self, filters: HospitalFilters | None = None) -> list[Hospital]:
         raise NotImplementedError
 
 

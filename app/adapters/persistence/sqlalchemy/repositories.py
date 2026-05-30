@@ -27,17 +27,16 @@ class SqlAlchemyHospitalRepository(HospitalRepository):
 
     def get_by_id(self, hospital_id: int) -> Hospital | None:
         record = self._session.get(HospitalRecord, hospital_id)
-        if record is None:
+        if record is None or not record.active:
             return None
         return self._to_domain(record)
 
-    def list(self, filters: HospitalFilters) -> list[Hospital]:
-        query: Select[tuple[HospitalRecord]] = select(HospitalRecord).order_by(HospitalRecord.id)
+    def list(self, filters: HospitalFilters | None = None) -> list[Hospital]:
+        query: Select[tuple[HospitalRecord]] = (
+            select(HospitalRecord).order_by(HospitalRecord.id).where(HospitalRecord.active)
+        )
 
-        if filters.active is not None:
-            query = query.where(HospitalRecord.active == filters.active)
-
-        if filters.creation_batch_id is not None:
+        if filters and filters.creation_batch_id is not None:
             query = query.where(HospitalRecord.creation_batch_id == str(filters.creation_batch_id))
 
         return [self._to_domain(record) for record in self._session.scalars(query).all()]
