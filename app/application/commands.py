@@ -8,4 +8,3 @@ class CreateHospitalCommand:
     address: str
     phone: str
     creation_batch_id: UUID
-    active: bool = False

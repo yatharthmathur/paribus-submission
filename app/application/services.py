@@ -18,7 +18,6 @@ class HospitalService:
             address=command.address.strip(),
             phone=command.phone.strip(),
             creation_batch_id=command.creation_batch_id,
-            active=command.active,
         )
 
         with self._uow_factory() as uow:

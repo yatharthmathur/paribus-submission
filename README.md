@@ -33,7 +33,6 @@ A production-ready FastAPI backend scaffold with `uv`-managed dependencies and D
 │   │   └── config.py
 │   ├── db/
 │   │   ├── base.py
-│   │   ├── init_db.py
 │   │   └── session.py
 │   ├── domain/
 │   │   ├── exceptions.py
@@ -44,6 +43,9 @@ A production-ready FastAPI backend scaffold with `uv`-managed dependencies and D
 ├── tests/
 │   ├── test_health.py
 │   └── test_hospitals.py
+├── alembic/
+│   └── versions/
+├── alembic.ini
 ├── .env.example
 ├── .dockerignore
 ├── docker-compose.yml
@@ -83,6 +85,8 @@ uv run pytest
 uv run ruff check .
 uv run ruff format .
 uv run mypy app tests
+uv run alembic upgrade head
+uv run alembic revision --autogenerate -m "describe change"
 ```
 
 ## Pre-commit
@@ -151,6 +155,30 @@ uv sync --extra mssql
 
 Note: MSSQL typically requires system ODBC libraries in addition to the Python package.
 
+## Alembic Migrations
+
+Schema changes are managed with Alembic.
+
+Apply all migrations:
+
+```sh
+uv run alembic upgrade head
+```
+
+Create a new migration after changing SQLAlchemy models:
+
+```sh
+uv run alembic revision --autogenerate -m "describe change"
+```
+
+Roll back one migration:
+
+```sh
+uv run alembic downgrade -1
+```
+
+For a new environment or deployment target, run migrations before starting the API.
+
 ## Docker Deployment
 
 Build and run locally with Docker Compose:
@@ -184,7 +212,7 @@ The API will be exposed on `http://127.0.0.1:${HOST_PORT:-8000}`.
 ## Endpoints
 
 - `GET /` - healthcheck endpoint
-- `POST /hospitals` - create a hospital record
+- `POST /hospitals` - create a hospital record (the `active` field defaults to `true`)
 - `GET /hospitals` - list hospitals, with optional `active` and `creation_batch_id` filters
 - `GET /hospitals/{id}` - fetch a hospital by ID
 - `GET /docs` - Swagger UI
